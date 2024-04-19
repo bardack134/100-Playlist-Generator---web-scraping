@@ -3,6 +3,10 @@ from datetime import datetime
 import pprint
 from bs4 import BeautifulSoup
 import requests
+from constansts import CLIENT_ID, CLIENT_SECRET, USER_NAME
+import spotipy
+from spotipy.oauth2 import SpotifyOAuth
+
 
 
 date=input('Please enter the desired date in the format YYYY-MM-DD to obtain the top most popular songs on that date: ')
@@ -69,3 +73,44 @@ songs_names=[song.get_text().strip('\n\t') for song in h3_tags ]
 #     songs_names.append(song.get_text().strip('\n\t'))
 
 pprint.pp(songs_names)
+
+
+#usamos la libreria Spotipy para autenticar nuestro proyecto python usando nuestro "CLIENT_ID_, CLIENT_SECRET", 
+#informacion detallada mirar la documentacion "https://spotipy.readthedocs.io/en/2.22.1/"
+
+
+#necesitamos obtener el id de usuario autenticado
+# necesitamos el redirect_url que especificamos en nuestra app en spotify Dashboar "http://localhost/"
+#solicitar permiso para modificar listas 
+
+
+#Crea una instancia de la clase Spotify de spotipy
+sp = spotipy.Spotify(
+    
+    auth_manager=SpotifyOAuth(
+        
+        #permiso para crear playlist
+        scope="playlist-modify-private",
+        
+        
+        #URI de redireccionamiento a la que se enviará el token de acceso después de que el usuario haya autorizado la aplicación
+        redirect_uri="http://localhost/",
+        
+        
+        #datos que se encuentran en la  plataforma de desarrolladores de Spotify
+        client_id=CLIENT_ID,       
+        client_secret=CLIENT_SECRET,
+        
+        
+        #  el nombre de usuario real de Spotify.
+        username=USER_NAME
+        
+        
+    )
+)
+
+# Obtener el ID de usuario actual, devuelve información sobre el usuario actualmente autenticado, incluido su ID de usuario.  
+user_id = sp.current_user()["id"]
+
+
+print(user_id)
