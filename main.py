@@ -61,8 +61,8 @@ web_html=response.text
 soup=BeautifulSoup(web_html, 'html.parser')
 
 
-#usando el metodo select, encuentro la etiqueta "h3" que tiene el nombre de las canciones, especificando sus etiquetas padres
-h3_tags=soup.css.select("li > ul > li > h3")
+#usando el metodo select, encuentro todas las etiquetas "h3" (que tiene el nombre de las canciones) especificando sus etiquetas padres
+h3_tags=soup.css.select("li > ul > li > h3")#encuentra las etiquestas h3 que esta dentro de un li, ya a su vez dentro de un ul..etc
 
 
 #creo una lista donde guardare el titulo de las canciones
@@ -113,4 +113,36 @@ sp = spotipy.Spotify(
 user_id = sp.current_user()["id"]
 
 
-print(user_id)
+#TODO:buscamos las canciones  almacenadas en la lista "songs_names" en Spotify
+
+# Inicializa una lista vacía llamada song_uris que se utilizará para almacenar los URIs de las canciones encontradas en Spotify.
+song_uris = []
+
+
+#Divide la fecha ingresada por el usuario en sus partes componentes y extrae el año (el primer elemento después de dividir la cadena en función del guión -).
+year = str(date).split("-")[0]
+
+
+#Itera sobre cada nombre de canción en la lista song_names
+for song in songs_names:
+    
+    # Utiliza el método search de la instancia sp para buscar canciones en Spotify que coincidan con el nombre de la canción y el año especificado. Esto devuelve un objeto JSON con los resultados de la búsqueda.
+    result = sp.search(q=f"track:{song} year:{year}", type="track")
+    
+    
+    print(result)
+    
+    
+    try:
+        #  Extrae el URI de la primera canción encontrada en los resultados de la búsqueda. Este URI se agrega a la lista song_uris.
+        uri = result["tracks"]["items"][0]["uri"]
+        
+        
+        song_uris.append(uri)
+        
+    except IndexError:
+        
+        #  Si no se encuentra ninguna canción,  imprime un mensaje indicando que la canción no existe en Spotify.
+        print(f"{song} doesn't exist in Spotify. Skipped.")
+        
+pprint.pp(song_uris)
