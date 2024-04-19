@@ -1,5 +1,6 @@
 #le pedimos al usuiario que ingrese la fecha en la cual le gustaria obtner las canciones mas populares
 from datetime import datetime
+import pprint
 from bs4 import BeautifulSoup
 import requests
 
@@ -7,28 +8,26 @@ import requests
 date=input('Please enter the desired date in the format YYYY-MM-DD to obtain the top most popular songs on that date: ')
 
 
-#funcion que usaremos para validar la fecha ingresada por el user
+#funcion que usaremos para validar la fecha ingresada por el user, recibe la fecha como parametro y el formato en que deberia estar la fecha
 def validate_date(date: str, format_str: str) -> bool:
     
-    global date_input_str #global constant for date_text to be keyed in by user
-    
-    
-    date_input_str = date   
-    
-    
+
     try:
         
     #convertmios la cadena de texto que representa la fecha en un formato datetime, para  manipular la data mas facilmente y hacer validaciones
         date_as_time = datetime.strptime(date, format_str)
-        
+    
+    
+    #si ocurre un error, es porque la fecha ingresada por el user esta mal escrita y devuelve false    
     except ValueError:
         
         return False
     
-# check if date is in the past
+# no ocurrio ningun error y se pudo crear el objetodatetime, comparamos ahora si la fecha es futura
     if date_as_time < datetime.now():
         
-        return True
+        #si es correcto devolvemos la fecha
+        return date
     
     else:
         
@@ -36,14 +35,14 @@ def validate_date(date: str, format_str: str) -> bool:
         return False
     
 
-while not validate_date(date, "%Y-%m-%d"):
+while  validate_date(date, "%Y-%m-%d") ==False:
     print("Invalid date. Please try again.")
     print()
     date=input('Please enter the desired date in the format YYYY-MM-DD to obtain the top most popular songs on that date: ')
     
 
 #url de la cual vamos hacer web scraping y obtener el top de las 10 canciones mas populares para la fecha que el usuario ingresara
-URL=f"https://www.billboard.com/charts/hot-100/{date_input_str}"
+URL=f"https://www.billboard.com/charts/hot-100/{date}"
 
 
 #hacemos un get request para obtener la informacion de nuestra pag web
@@ -57,4 +56,16 @@ web_html=response.text
 #Creando objeto beautiful soup
 soup=BeautifulSoup(web_html, 'html.parser')
 
-print(soup.prettify())
+
+#usando el metodo select, encuentro la etiqueta "h3" que tiene el nombre de las canciones, especificando sus etiquetas padres
+h3_tags=soup.css.select("li > ul > li > h3")
+
+
+#creo una lista donde guardare el titulo de las canciones
+songs_names=[song.get_text().strip('\n\t') for song in h3_tags ]
+# songs_names=[]
+
+# for song in h3_tags:
+#     songs_names.append(song.get_text().strip('\n\t'))
+
+pprint.pp(songs_names)
