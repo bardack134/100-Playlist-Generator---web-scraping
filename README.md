@@ -26,4 +26,5 @@ This Python script scrapes the Billboard Hot 100 chart (https://www.billboard.co
   ### Results and Achievements
 - Achievement as a Python programmer by successfully automating the process of creating Spotify playlists based on Billboard Hot 100 charts.
 - Get skills in using web scraping and API requests together in this opportunity  to get songs and add them to playlists
-  
+
+
