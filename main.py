@@ -146,3 +146,12 @@ for song in songs_names:
         print(f"{song} doesn't exist in Spotify. Skipped.")
         
 pprint.pp(song_uris)
+
+
+#creaando playlist de canciones, recibe 3 parametros usuario, fecha ingresada para el nombre del playlisyt, y publico false
+playlist = sp.user_playlist_create(user=user_id, name=f"{date} Billboard 100", public=False)
+
+
+# print(playlist)
+# gregamos las canciones en la lista song_uris, a la lista de reproducción recién creada en Spotify, identificada por su ID playlist["id"].
+sp.playlist_add_items(playlist_id=playlist["id"], items=song_uris)
